@@ -1,0 +1,28 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    awesome_print (1.7.0)
+    cause (0.1)
+    httparty (0.14.0)
+      multi_xml (>= 0.5.2)
+    influxdb (0.3.12)
+      cause
+      json
+    json (2.0.2)
+    multi_xml (0.5.5)
+    rake (11.3.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  httparty (~> 0.14.0)
+  influxdb (~> 0.3.12)
+  rake (~> 11.3)
+
+RUBY VERSION
+   ruby 2.3.1p112
+
+BUNDLED WITH
+   1.13.6
