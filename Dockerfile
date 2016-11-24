@@ -137,6 +137,7 @@ cd /opt/dockerhub-stats/ && \
 # install runtime packages
  apt-get install -y \
 	--no-install-recommends \
+	cron \
 	libfontconfig1 \
 	libfreetype6 \
 	libpng12-0 \
