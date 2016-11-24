@@ -141,6 +141,7 @@ cd /opt/dockerhub-stats/ && \
 	libfontconfig1 \
 	libfreetype6 \
 	libpng12-0 \
+	netcat \
 	wget \
 	ruby && \
 
