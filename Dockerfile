@@ -155,7 +155,8 @@ cd /opt/dockerhub-stats/ && \
  find /root -name . -o -prune -exec rm -rf -- {} + && \
  find /var/lib/gems -name "cache" -type d -exec rm -rf -- {} + && \
  mkdir -p \
-	/root
+	/root && \
+chmod 744 /etc/cron.d/dockerhub-stats
 
 # import grafana dashboard
 # ADD ./grafana/dash.json /var/lib/grafana/dashboards/dash.json
