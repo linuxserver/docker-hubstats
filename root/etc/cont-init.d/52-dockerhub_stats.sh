@@ -1,5 +1,9 @@
 #!/usr/bin/with-contenv bash
 
+if [ ! -d /config/app ]; then
+	mkdir /config/app
+fi
+
 if [ ! -f /config/app/settings.yml ]; then
 	cp /opt/dockerhub-stats/config/settings.yml.example /config/app/settings.yml
 fi
