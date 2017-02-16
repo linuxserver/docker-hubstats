@@ -145,8 +145,8 @@ cd /opt/dockerhub-stats/ && \
 	wget \
 	ruby && \
 
- cd /tmp; wget wget https://dl.influxdata.com/influxdb/releases/influxdb_1.1.0_amd64.deb; dpkg -i influxdb_1.1.0_amd64.deb && \
- cd /tmp; wget https://grafanarel.s3.amazonaws.com/builds/grafana_3.1.1-1470047149_amd64.deb; dpkg -i grafana_3.1.1-1470047149_amd64.deb && apt-get -f install && \
+ cd /tmp; wget https://dl.influxdata.com/influxdb/releases/influxdb_1.2.0_amd64.deb; dpkg -i influxdb_1.2.0_amd64.deb && \
+ cd /tmp; wget https://grafanarel.s3.amazonaws.com/builds/grafana_4.1.2-1486989747_amd64.deb; dpkg -i grafana_4.1.2-1486989747_amd64.deb && apt-get -f install && \
 
  rm -rf \
 	/tmp/* \
