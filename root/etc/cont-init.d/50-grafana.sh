@@ -13,6 +13,7 @@ mkdir -p /config/etc/grafana /config/var/lib/grafana /config/var/log/grafana
 cp /etc/grafana/grafana.ini /config/etc/grafana
 
 /usr/sbin/grafana-server --homepath=/usr/share/grafana --config=/config/etc/grafana/grafana.ini cfg:default.paths.data=/config/var/lib/grafana cfg:default.paths.logs=/config/var/log/grafana 2>&1 &
+GRAFANA_PID=$!
 
 until nc -z -v -w5 localhost 3000 < /dev/null; do sleep 1; done
 
@@ -32,6 +33,5 @@ curl 'http://admin:admin@localhost:3000/api/datasources' \
 DATASOURCE
 echo
 
-kill `ps -ef | grep grafana-server | grep homepath | awk {'print $2'}`
-
+kill ${GRAFANA_PID}
 touch ${STAMP}
