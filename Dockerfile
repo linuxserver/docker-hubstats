@@ -6,6 +6,9 @@ ARG BUILD_DATE
 ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
+# copy app files
+COPY app/ /opt/dockerhub-stats/
+
 # environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
 
@@ -114,10 +117,6 @@ ARG BUILD_PACKAGES="\
 	x11-common \
 	zlib1g-dev"
 
-# copy app and excludes
-COPY root/ /
-COPY app/ /opt/dockerhub-stats/
-
 # install build packages
 RUN \
  apt-get update && \
@@ -165,8 +164,10 @@ RUN \
 	/var/lib/apt/lists/* \
 	/var/tmp/* && \
  mkdir -p \
-	/root && \
- chmod 744 /etc/cron.d/dockerhub-stats
+	/root
+
+# copy local files
+COPY root/ /
 
 # ports and volumes
 EXPOSE 3000 8083 8086
