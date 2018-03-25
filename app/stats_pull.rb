@@ -14,15 +14,21 @@ def processs_org(org)
 
   res = HTTParty.get(
     "https://hub.docker.com/v2/repositories/#{org}/",
-    query: { page_size: 100 })
-  data = JSON.parse(res.body)
+    query: { page_size: 20 })
 
   pull_counts = {}
-  while data.include?('next') && data['next'].nil? == false
-    url = data['next']
-    res = HTTParty.get(url)
+  continue = true
+  while continue
     data = JSON.parse(res.body)
     pull_counts.merge!(process_counts(data, arch))
+
+    if data.include?('next') && data['next'].nil? == false
+      url = data['next']
+      res = HTTParty.get(url)
+    else
+      continue = false
+    end
+
   end
 
   pull_counts
@@ -40,7 +46,10 @@ def process_counts(data, arch)
 end
 
 def insert_counts(data)
-  influxdb = InfluxDB::Client.new database: "dockerhub_stats", port: 18086
+  port = 8086
+  port = ENV['INFLUXDB_PORT'].to_i unless ENV['INFLUXDB_PORT'].nil?
+
+  influxdb = InfluxDB::Client.new database: "dockerhub_stats", port: port
   data.each do |repo, repo_data|
     influx_data = {
       values: { pull_count: repo_data[:pull_count] },
@@ -54,19 +63,18 @@ end
 def run
   orgs = nil
 
+  # pull orgs from env var
   unless ENV['DOCKERHUB_ORGS'].nil?
     orgs = ENV['DOCKERHUB_ORGS'].split(',')
   end
 
+  # pull orgs from settings file if not specified in env var
   if orgs.nil?
     config_file = File.dirname(__FILE__) + "/config/settings.yml"
     config = YAML.load_file(config_file)
 
     orgs = config["orgs"]
   end
-
-  ap orgs
-  exit
 
   counts = {}
   orgs.each do |org|

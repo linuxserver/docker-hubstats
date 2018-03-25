@@ -163,5 +163,5 @@ chmod 744 /etc/cron.d/dockerhub-stats
 
 # ports and volumes
 #WORKDIR /opt/docker-readme-sync
-EXPOSE 3000 8083 8086
+EXPOSE 3000 8083 8086 4567
 VOLUME /config

@@ -7,3 +7,4 @@ gem 'httparty', '~> 0.14.0'
 gem 'influxdb', '~> 0.3.12'
 
 gem 'awesome_print'
+gem 'sinatra', '~> 2.0', '>= 2.0.1'
