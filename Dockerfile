@@ -78,5 +78,5 @@ RUN \
 COPY root/ /
 
 # ports and volumes
-EXPOSE 3000 8083 8086
+EXPOSE 3000 8083 8086 4567
 VOLUME /config

@@ -1,40 +1,31 @@
-require "httparty"
 require "awesome_print"
 require "influxdb"
-require "yaml"
+require "sinatra"
 
-config_file = File.dirname(__FILE__) + "/config/settings.yml"
-config = YAML.load_file(config_file)
+def get_data
+  port = 8086
+  port = ENV['INFLUXDB_PORT'].to_i unless ENV['INFLUXDB_PORT'].nil?
 
-email = config["email"]
-password = config["password"]
-org 	 = config["org"]
+  influxdb = InfluxDB::Client.new database: "dockerhub_stats", port: port
+  query = 'select max(pull_count) as count from dockerhub_stats where time > now() - 1h group by repo,arch'
+  res = influxdb.query(query)
 
-data = { username: email,
-		 password: password }
+  data = []
+  res.each do |repo|
+    repo_name = repo['tags']['repo']
+    count = repo['values'][0]['count']
+    arch = repo['tags']['arch']
+    data << { name: repo_name, count: count, arch: arch }
+  end
 
-res = HTTParty.post("https://hub.docker.com/v2/users/login/", body: data).body
-token = JSON.parse(res)["token"]
-
-headers = { token: token}
-res = HTTParty.get(
-  "https://hub.docker.com/v2/repositories/#{org}/",
-  query: { page_size: 100 },
-  headers: headers)
-
-data = JSON.parse(res.body)
-
-pull_counts = {}
-data["results"].each do |repo|
-	pull_counts[repo["name"]] = repo["pull_count"]
+  data
 end
 
-influxdb = InfluxDB::Client.new database: "dockerhub_stats"
-pull_counts.each do |repo, count|
-	data = {
-	  values: { pull_count: count },
-	  tags:   { repo: repo }
-	}
+set :logging, true
+set :dump_errors, true
+set :bind, '0.0.0.0'
 
-	influxdb.write_point("dockerhub_stats", data)
+get '/stats' do
+  content_type :json
+  get_data.to_json
 end
