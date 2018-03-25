@@ -11,3 +11,5 @@ fi
 if [ ! -f /opt/dockerhub-stats/config/settings.yml ]; then
 	ln -s /config/app/settings.yml /opt/dockerhub-stats/config/settings.yml
 fi
+
+chmod 744 /etc/cron.d/dockerhub-stats
