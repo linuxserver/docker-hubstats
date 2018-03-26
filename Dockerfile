@@ -1,10 +1,10 @@
-FROM lsiobase/xenial
-MAINTAINER phendryx
+FROM lsiobase/ubuntu:xenial
 
 # set version label
 ARG BUILD_DATE
 ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
+LABEL maintainer="phendryx"
 
 # copy app files
 COPY app/ /opt/dockerhub-stats/
@@ -25,25 +25,22 @@ ARG BUILD_PACKAGES="\
 	ruby-dev \
 	wget"
 
-# install build packages
 RUN \
+ echo "**** install build packages ****" && \
  apt-get update && \
  apt-get install -y \
 	--no-install-recommends \
 	$BUILD_PACKAGES && \
-
-# install ruby app gems
+ echo "**** install ruby app gems ****" && \
  cd /opt/dockerhub-stats/ && \
  echo 'gem: --no-document' > \
 	/etc/gemrc && \
  gem install bundler && \
  bundle install && \
-
-# clean up
+ echo "**** uninstall build packages ****" && \
  apt-get purge -y --auto-remove \
 	$BUILD_PACKAGES && \
-
-# install runtime packages
+ echo "****install runtime packages ****" && \
  apt-get install -y \
 	--no-install-recommends \
 	cron \
@@ -53,8 +50,7 @@ RUN \
 	netcat \
 	ruby \
 	wget && \
-
- # install influxdb and grafana
+ echo "**** install influxdb and grafana ****" && \
  curl -o \
  /tmp/influxdb.deb \
 	"https://dl.influxdata.com/influxdb/releases/influxdb_${INFLUX_VER}_amd64.deb" && \
@@ -64,8 +60,7 @@ RUN \
 	"https://grafanarel.s3.amazonaws.com/builds/grafana_${GRAFANA_VER}_amd64.deb" && \
  dpkg -i /tmp/grafana.deb && \
  apt-get -f install && \
-
-# clean up
+ echo "**** cleanup ****" && \
  rm -rf \
 	/root \
 	/tmp/* \
