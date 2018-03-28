@@ -14,7 +14,7 @@ def processs_org(org)
 
   res = HTTParty.get(
     "https://hub.docker.com/v2/repositories/#{org}/",
-    query: { page_size: 20 })
+    query: { page_size: 100   })
 
   pull_counts = {}
   continue = true
@@ -39,7 +39,7 @@ def process_counts(data, arch)
   data['results'].each do |repo|
     name = repo['name']
     count = repo['pull_count']
-    pull_counts[name] = { arch: arch, pull_count: count}
+    pull_counts["#{name}-#{arch}"] = { name: name, arch: arch, pull_count: count}
   end
 
   pull_counts
@@ -50,11 +50,12 @@ def insert_counts(data)
   port = ENV['INFLUXDB_PORT'].to_i unless ENV['INFLUXDB_PORT'].nil?
 
   influxdb = InfluxDB::Client.new database: "dockerhub_stats", port: port
-  data.each do |repo, repo_data|
+  data.each do |key, repo_data|
     influx_data = {
       values: { pull_count: repo_data[:pull_count] },
-      tags:   { repo: repo, arch: repo_data[:arch] }
+      tags:   { repo: repo_data[:name], arch: repo_data[:arch] }
     }
+
     influxdb.write_point("dockerhub_stats", influx_data)
   end
 
