@@ -53,7 +53,7 @@ def insert_counts(data)
   data.each do |key, repo_data|
     influx_data = {
       values: { pull_count: repo_data[:pull_count] },
-      tags:   { repo: repo_data[:name], arch: repo_data[:arch] }
+      tags:   { repo: repo_data[:name], arch: repo_data[:arch], org: repo_data[:org] }
     }
 
     influxdb.write_point("dockerhub_stats", influx_data)
@@ -79,7 +79,12 @@ def run
 
   counts = {}
   orgs.each do |org|
-    counts.merge!(processs_org(org))
+    org_counts = processs_org(org)
+    org_counts.each do |org_count|
+      org_count[1][:org] = org
+    end
+
+    counts.merge!(org_counts)
   end
 
   insert_counts(counts)

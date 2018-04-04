@@ -7,7 +7,7 @@ def get_data
   port = ENV['INFLUXDB_PORT'].to_i unless ENV['INFLUXDB_PORT'].nil?
 
   influxdb = InfluxDB::Client.new database: "dockerhub_stats", port: port
-  query = 'select max(pull_count) as count from dockerhub_stats where time > now() - 1h group by repo,arch'
+  query = 'select max(pull_count) as count from dockerhub_stats where time > now() - 1h group by repo,arch,org'
   res = influxdb.query(query)
 
   data = []
@@ -15,7 +15,9 @@ def get_data
     repo_name = repo['tags']['repo']
     count = repo['values'][0]['count']
     arch = repo['tags']['arch']
-    data << { name: repo_name, count: count, arch: arch }
+    org = repo['tags']['org']
+    url = "https://hub.docker.com/r/#{org}/#{repo_name}"
+    data << { name: repo_name, count: count, arch: arch, org: org, url: url }
   end
 
   data

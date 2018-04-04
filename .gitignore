@@ -47,3 +47,7 @@ app/config/settings.yml
 app/tmp
 tmp
 local-*.sh
+
+testconfig
+.idea
+
