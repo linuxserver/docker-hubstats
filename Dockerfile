@@ -16,7 +16,7 @@ ARG DEBIAN_FRONTEND="noninteractive"
 ARG GRAFANA_VER="4.1.2-1486989747"
 ARG INFLUX_VER="1.2.0"
 
-# build packages as variable
+# packages as variables
 ARG BUILD_PACKAGES="\
 	g++ \
 	gcc \
@@ -24,7 +24,14 @@ ARG BUILD_PACKAGES="\
 	make \
 	ruby-dev \
 	wget"
-
+ARG RUNTIME_PACKAGES="\
+	cron \
+	libfontconfig1 \
+	libfreetype6 \
+	libpng12-0 \
+	netcat \
+	ruby \
+	wget"
 RUN \
  echo "**** install build packages ****" && \
  apt-get update && \
@@ -43,13 +50,7 @@ RUN \
  echo "****install runtime packages ****" && \
  apt-get install -y \
 	--no-install-recommends \
-	cron \
-	libfontconfig1 \
-	libfreetype6 \
-	libpng12-0 \
-	netcat \
-	ruby \
-	wget && \
+	$RUNTIME_PACKAGES && \
  echo "**** install influxdb and grafana ****" && \
  curl -o \
  /tmp/influxdb.deb \
